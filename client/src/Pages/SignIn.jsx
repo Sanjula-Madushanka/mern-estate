@@ -13,28 +13,45 @@ export default function SignIn() {
       [e.target.id]: e.target.value,
     
     });
-  
-  
   };
+
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch('/api/auth/sign-in', {
-      method: 'POST',headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
+try {
+  setLoading(true);
+  const res = await fetch('/api/auth/sign-in', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData),
+  });
 
-    });
 
-    const data = await res.json();
+  const data = await res.json();
+  console.log(data);
+  navigate('/Home');
 
-    console.log(data);
-    navigate('/Home');
+  if (!data.success) {
+    setLoading(false);
+    setError(data.message);
+    return;
+  }
+
+  setLoading(false);
+  setError(null);
+} catch (error) {
+  setLoading(false);
+  setError(error.message);
+  console.log('Error during sign up:', error.message);
+}
+
+  
   };
-
-  console.log(formData);
-
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl text-center font-center font-semibold my-7'>Sign In</h1>
@@ -50,7 +67,8 @@ export default function SignIn() {
        <input type="password"
           placeholder='Password'className='border p-3 rounded-lg'id='password'onChange={handleChange}/>
          
-        <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-80'>Sign In</button>
+        <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-80'>
+        {loading ? 'Loading...' : 'Sign In'}</button>
         
       </form>
 
@@ -61,6 +79,7 @@ export default function SignIn() {
         </Link>
 
       </div>
+      {error && <p className="text-red-500 mt-5">{error}</p>}
     </div>
   );
 }
