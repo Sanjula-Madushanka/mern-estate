@@ -14,8 +14,13 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,   
-    }
-}, { timestamps: true }); // Fixed typo here
+    },
+    avatar:{
+        type:String,
+        default:"https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg"
+    },
+}, 
+{ timestamps: true }); 
 
 const User = mongoose.model('User', userSchema); // Fixed typo here
 
